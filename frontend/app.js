@@ -200,8 +200,9 @@ function familyChoresApp() {
                 this.showRegisterFamily = false;
                 this.registerForm = { name: '', admin_email: '' };
                 
-                // Auto-login with the new family
-                await this.loginWithFamilyCode();
+                // Don't auto-login, just show the family code for manual login
+                this.showNotification('success', 'Family Registered!', 
+                    `Your family code is: ${data.family.family_code}. Please enter it to continue.`);
             } catch (error) {
                 this.showNotification('error', 'Registration Failed', error.message);
             } finally {
