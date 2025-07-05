@@ -9,9 +9,14 @@ All changes have been pushed to GitHub. Now deploy them to your server:
 ssh zbonham@192.168.12.220
 ```
 
-### Step 2: Run the Deployment Script
+### Step 2: Navigate to WebApp Directory and Pull Latest Changes
 ```bash
 cd /home/zbonham/WebApp
+git pull origin main
+```
+
+### Step 3: Run the Deployment Script
+```bash
 chmod +x deploy-latest-to-server.sh
 ./deploy-latest-to-server.sh
 ```
