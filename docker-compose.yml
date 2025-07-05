@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: family_chores_db
+    environment:
+      MYSQL_ROOT_PASSWORD: FamilyChores2025!
+      MYSQL_DATABASE: family_chores
+      MYSQL_USER: chores_user
+      MYSQL_PASSWORD: ChoresPass123!
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    networks:
+      - family_chores_network
+
+  api:
+    build: ./api
+    container_name: family_chores_api
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: chores_user
+      DB_PASSWORD: ChoresPass123!
+      DB_NAME: family_chores
+      JWT_SECRET: FamilyChoresJWT2025SecretKey!
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: AdminPass123!
+      SERVER_IP: 192.168.12.220
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - family_chores_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: family_chores_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend:/usr/share/nginx/html
+      - ./uploads:/usr/share/nginx/html/uploads
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - family_chores_network
+
+volumes:
+  mysql_data:
+
+networks:
+  family_chores_network:
+    driver: bridge

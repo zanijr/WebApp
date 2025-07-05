@@ -1,137 +1,261 @@
-# Family Chores App 📱
+# Family Chores App
 
-A **Progressive Web App (PWA)** for managing family chores with fair round-robin assignments, configurable rewards, and mobile-first design.
+A comprehensive family chore management application that helps families organize tasks, track completion, and manage rewards.
 
-## ✨ Features
+## Features
 
-### 🔄 **Smart Assignment System**
+- **Family Management**: Create and manage family accounts with unique family codes
+- **User Roles**: Support for parents and children with different permissions
+- **Chore System**: Create, assign, and track chores with customizable rewards
+- **Photo Verification**: Optional photo submission for chore completion
+- **Reward Tracking**: Monitor earnings and completed tasks
+- **Progressive Web App**: Install on mobile devices for easy access
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
 
-- Fair round-robin rotation between children
-- Configurable acceptance timers (kids have time to accept/decline)
-- Auto-assignment when cycling back to original child
-- Optional reward reduction settings
+## Quick Start
 
-### 💰 **Flexible Rewards**
+### Prerequisites
 
-- Money or screen time rewards
-- Configurable penalty system for late completion
-- Parent-controlled payout schedules
-- Real-time earnings tracking
+- Docker Desktop installed and running
+- Node.js 18+ (for development)
+- Git
 
-### 📱 **Mobile-First PWA**
+### Using Docker (Recommended)
 
-- **Installs like native app** on iOS/Android
-- **Works offline** with service worker caching
-- **Push notifications** for chore assignments
-- **Haptic feedback** and touch optimizations
-- **Pull-to-refresh** functionality
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/zanijr/WebApp.git
+   cd WebApp
+   ```
 
-### ⏰ **Advanced Timing**
+2. **Start Docker Desktop** (if not already running)
 
-- Acceptance timer (how long to accept chore)
-- Optional completion timer with penalties
-- Real-time countdown displays
-- Scheduled chores for specific dates/times
+3. **Build and run the application**:
+   ```bash
+   docker-compose up --build
+   ```
 
-### 📷 **Verification Features**
+4. **Access the application**:
+   - Open your browser and go to `http://localhost` or `http://192.168.12.220`
+   - The application will be available on port 80
 
-- Optional photo verification for chores
-- Parent approval system
-- Submission tracking and history
+### Manual Setup (Development)
 
-### 🔁 **Recurring Chores**
+If you prefer to run without Docker:
 
-- Daily or weekly recurring schedules
-- Automatic reset on schedule
-- Customizable recurring days
+1. **Set up the database**:
+   - Install MySQL 8.0
+   - Create a database named `family_chores`
+   - Run the SQL script from `database/init.sql`
 
-## 🚀 Live Demo
+2. **Configure environment variables**:
+   ```bash
+   cd api
+   cp .env.example .env
+   # Edit .env with your database credentials
+   ```
 
-**Try it now:** <https://zanijr.github.io/WebApp>
+3. **Install and run the API**:
+   ```bash
+   cd api
+   npm install
+   npm start
+   ```
 
-### 📲 **Install on Your Phone:**
+4. **Serve the frontend**:
+   ```bash
+   cd frontend
+   # Use any static file server, e.g.:
+   python -m http.server 8080
+   # or
+   npx serve .
+   ```
 
-1. Open the link above on your phone
-1. Look for “Add to Home Screen” prompt
-1. Tap “Add” - app installs like native app!
+## Usage
 
-## 👨‍👩‍👧‍👦 **How to Use**
+### Getting Started
 
-### **Setup:**
+1. **Register a Family**:
+   - Click "Don't have a family code? Register here"
+   - Enter your family name and admin email
+   - You'll receive a unique family code
 
-1. Open app and choose your profile (Parent/Child)
-1. Parents create chores with rewards and settings
-1. Start assignments for fair rotation
+2. **Add Family Members**:
+   - Log in as a parent
+   - Go to the Family tab
+   - Click "Add Member" to add children and other parents
 
-### **For Parents:**
+3. **Create Chores**:
+   - Parents can create chores in the Manage tab
+   - Set rewards (money or screen time)
+   - Configure photo requirements and timers
 
-- Create chores with custom rewards
-- Set acceptance/completion timers
-- Configure reward reduction rules
-- Approve completed chores
-- Track earnings and payouts
+4. **Assign and Complete Chores**:
+   - Parents assign chores to children
+   - Children accept/decline and submit completion
+   - Parents review and approve submissions
 
-### **For Kids:**
+### Family Roles
 
-- Receive chore notifications
-- Accept or pass chores to next sibling
-- Complete with optional photo proof
-- Track earnings in real-time
+- **Parents**: Can create chores, assign tasks, review submissions, and manage family members
+- **Children**: Can accept/decline chores, submit completion, and track their earnings
 
-## 🛠️ **Technical Details**
+## Architecture
 
-- **Framework:** React 18 with Hooks
-- **Styling:** Tailwind CSS
-- **PWA Features:** Service Worker, Web App Manifest
-- **Mobile Features:** Touch feedback, haptic vibration
-- **Offline Support:** Cached app shell and data
-- **Installation:** Progressive Web App standards
+### Backend (Node.js/Express)
+- RESTful API with JWT authentication
+- MySQL database with comprehensive schema
+- File upload handling for photos
+- Role-based access control
 
-## 📊 **Family Management Features**
+### Frontend (Vanilla JS/Alpine.js)
+- Progressive Web App (PWA)
+- Responsive design with Tailwind CSS
+- Offline capability with service workers
+- Real-time updates
 
-- **Fair Distribution:** No more “Emma always gets chores first!”
-- **Configurable Timers:** Parents control acceptance/completion timing
-- **Flexible Penalties:** Optional reward reductions for delays
-- **Scheduled Tasks:** Set chores for specific future times
-- **Recurring Automation:** Daily/weekly chore automation
-- **Earnings Tracking:** Real-time reward accumulation
-- **Photo Verification:** Proof of completed tasks
-- **Offline Ready:** Works without internet connection
+### Infrastructure
+- Docker containerization
+- Nginx reverse proxy
+- MySQL database
+- Volume persistence for uploads and data
 
-## 🌟 **Why PWA?**
+## API Endpoints
 
-✅ **No App Store** approval needed  
-✅ **Works on ALL devices** (iPhone, Android, tablets)  
-✅ **Instant updates** when features improve  
-✅ **Easy sharing** - just send a link  
-✅ **Native app experience** with web technology
+### Authentication
+- `POST /api/auth/family/login` - Login with family code
+- `POST /api/auth/user/login` - Select user profile
+- `GET /api/auth/verify` - Verify JWT token
 
-## 🔧 **Development**
+### Families
+- `POST /api/families/register` - Register new family
+- `POST /api/families/:id/members` - Add family member
 
-To run locally:
+### Chores
+- `GET /api/chores` - Get all family chores
+- `POST /api/chores` - Create new chore (parents only)
+- `POST /api/chores/:id/assign` - Assign chore (parents only)
+- `POST /api/chores/:id/accept` - Accept chore (children only)
+- `POST /api/chores/:id/decline` - Decline chore (children only)
+- `POST /api/chores/:id/submit` - Submit completion (children only)
 
-```bash
-git clone https://github.com/zanijr/WebApp.git
-cd WebApp
-# Open index.html in a modern browser
-# Or serve with any local server
+### Users
+- `GET /api/users/profile` - Get user profile and stats
+- `GET /api/users/chores` - Get user's assigned chores
+- `GET /api/users/family/members` - Get family members
+
+## Database Schema
+
+The application uses a comprehensive MySQL schema with the following main tables:
+
+- `families` - Family information and settings
+- `users` - Family members with roles and earnings
+- `chores` - Chore definitions and current state
+- `chore_assignments` - Assignment tracking
+- `chore_submissions` - Completion submissions
+- `completed_tasks` - Approved completions
+
+## Configuration
+
+### Environment Variables
+
+Create a `.env` file in the `api` directory:
+
+```env
+# Database
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=family_chores
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key-here
+
+# Server
+PORT=3000
+NODE_ENV=production
+
+# File Upload
+UPLOAD_MAX_SIZE=5242880
 ```
 
-## 🤝 **Contributing**
+### Docker Configuration
 
-Feel free to:
+The application uses Docker Compose with the following services:
 
-- Report bugs
-- Suggest features
-- Submit pull requests
-- Share with other families!
+- **nginx**: Reverse proxy and static file server
+- **api**: Node.js backend application
+- **db**: MySQL 8.0 database
 
-## 📄 **License**
+## Security Features
 
-Open source - use freely for your family!
+- JWT-based authentication
+- Role-based access control
+- Input validation and sanitization
+- File upload restrictions
+- Rate limiting on API endpoints
+- CORS configuration
+- Security headers
 
------
+## Mobile App Features
 
-**Made with ❤️ for families who want to make chores fair and fun!**
+The application is a Progressive Web App (PWA) that can be installed on mobile devices:
 
-*Turn chore management from chaos to cooperation with smart technology.* 🎯
+- Offline functionality
+- Push notifications (future feature)
+- Native app-like experience
+- Responsive design for all screen sizes
+
+## Development
+
+### Project Structure
+
+```
+WebApp/
+├── api/                 # Backend Node.js application
+│   ├── config/         # Database and app configuration
+│   ├── middleware/     # Authentication and validation
+│   ├── routes/         # API route handlers
+│   ├── uploads/        # File upload storage
+│   └── server.js       # Main application entry
+├── database/           # Database schema and migrations
+├── frontend/           # Frontend application
+│   ├── index.html      # Main application page
+│   ├── app.js          # JavaScript application logic
+│   ├── manifest.json   # PWA manifest
+│   └── sw.js           # Service worker
+├── nginx/              # Nginx configuration
+└── docker-compose.yml  # Docker orchestration
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Docker not starting**: Ensure Docker Desktop is installed and running
+2. **Database connection errors**: Check MySQL credentials in `.env`
+3. **Port conflicts**: Ensure ports 80, 3000, and 3306 are available
+4. **File upload issues**: Check upload directory permissions
+
+### Logs
+
+- Application logs: `docker-compose logs api`
+- Database logs: `docker-compose logs db`
+- Nginx logs: `docker-compose logs nginx`
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support and questions, please open an issue on GitHub or contact the development team.
